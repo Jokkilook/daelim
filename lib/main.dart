@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: FlexThemeData.light(scheme: FlexScheme.mandyRed),
         darkTheme: FlexThemeData.dark(scheme: FlexScheme.mandyRed),
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.system,
         home: const LoginScreen());
   }
 }
