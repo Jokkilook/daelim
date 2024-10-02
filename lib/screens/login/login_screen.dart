@@ -1,8 +1,12 @@
 import 'dart:convert';
 
-import 'package:daelim/common/enums/sso_enum.dart';
-import 'package:daelim/common/extensions/context_extension.dart';
+import 'package:daelim/helpers/StorageHelper.dart';
+import 'package:daelim/enums/sso_enum.dart';
+import 'package:daelim/extensions/context_extension.dart';
 import 'package:daelim/common/widgets/gradient_divider.dart';
+import 'package:daelim/models/auth_data.dart';
+import 'package:daelim/routes/app_router.dart';
+import 'package:daelim/routes/app_screen.dart';
 import 'package:easy_extension/easy_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +26,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   bool _isObscure = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _emailController.text = "202030330@daelim.ac.kr";
+    _pwController.text = "202030330";
+  }
 
   @override
   void dispose() {
@@ -64,12 +76,21 @@ class _LoginScreenState extends State<LoginScreen> {
       body: jsonEncode(loginData),
     );
 
-    if (response.statusCode == 200) {
-      Log.green("SUCCESS");
-      Log.green(response.body);
+    if (response.statusCode != 200) {
+      if (mounted) {
+        context.showSnackBar(message: response.body);
+      }
+      return;
     } else {
-      Log.red("FAILED");
-      Log.red(response.body);
+      var authData = AuthData.fromJson(response.body);
+
+      await StorageHelper.setAuthData(authData);
+
+      final savedAuthData = StorageHelper.getAuthData();
+
+      Log.cyan(response.body);
+      Log.green(savedAuthData);
+      appRouter.pushNamed(AppScreen.main.name);
     }
   }
 
@@ -186,81 +207,89 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFDEDEE2),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-          child: DefaultTextStyle(
-            style:
-                GoogleFonts.poppins(color: context.textTheme.bodyMedium?.color),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                36.heightBox,
-                ..._buildTitleText(),
-                25.heightBox,
-                ..._buildTextFields(),
-                16.heightBox,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _onRecoveryPassword,
-                    child: const Text(
-                      "Recovery Password",
-                      style: TextStyle(fontSize: 12),
-                    ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            child: DefaultTextStyle(
+              style: GoogleFonts.poppins(
+                  color: context.textTheme.bodyMedium?.color),
+              child: Center(
+                child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      36.heightBox,
+                      ..._buildTitleText(),
+                      25.heightBox,
+                      ..._buildTextFields(),
+                      16.heightBox,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _onRecoveryPassword,
+                          child: const Text(
+                            "Recovery Password",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                      16.heightBox,
+                      //Sign in Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                            onPressed: _onSignIn,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE46A61),
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                              shadowColor: const Color(0xFFE46A61),
+                            ),
+                            child: const Text(
+                              "Sign In",
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      ),
+
+                      40.heightBox,
+
+                      //Or continue with
+                      Row(
+                        children: [
+                          const Expanded(child: GradientDivider()),
+                          15.widthBox,
+                          const Text(
+                            "Or continue with",
+                          ),
+                          15.widthBox,
+                          const Expanded(child: GradientDivider(reverse: true)),
+                        ],
+                      ),
+
+                      40.heightBox,
+
+                      //SSO Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildSSOButton(
+                              iconUrl: icGoogle,
+                              onTap: () => _onSsoSignIn(SsoEnum.google)),
+                          _buildSSOButton(
+                              iconUrl: icGithub,
+                              onTap: () => _onSsoSignIn(SsoEnum.github)),
+                          _buildSSOButton(
+                              iconUrl: icApple,
+                              onTap: () => _onSsoSignIn(SsoEnum.apple)),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                16.heightBox,
-                //Sign in Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                      onPressed: _onSignIn,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE46A61),
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6)),
-                        shadowColor: const Color(0xFFE46A61),
-                      ),
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                ),
-
-                40.heightBox,
-
-                //Or continue with
-                Row(
-                  children: [
-                    const Expanded(child: GradientDivider()),
-                    15.widthBox,
-                    const Text(
-                      "Or continue with",
-                    ),
-                    15.widthBox,
-                    const Expanded(child: GradientDivider(reverse: true)),
-                  ],
-                ),
-
-                40.heightBox,
-
-                //SSO Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildSSOButton(
-                        iconUrl: icGoogle,
-                        onTap: () => _onSsoSignIn(SsoEnum.google)),
-                    _buildSSOButton(
-                        iconUrl: icGithub,
-                        onTap: () => _onSsoSignIn(SsoEnum.github)),
-                    _buildSSOButton(
-                        iconUrl: icApple,
-                        onTap: () => _onSsoSignIn(SsoEnum.apple)),
-                  ],
-                )
-              ],
+              ),
             ),
           ),
         ),
