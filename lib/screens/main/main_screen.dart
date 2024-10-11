@@ -1,3 +1,5 @@
+import 'package:daelim/common/scaffold/app_scaffold.dart';
+import 'package:daelim/routes/app_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatelessWidget {
@@ -5,11 +7,12 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
+    return const AppScaffold(
+      appScreen: AppScreen.main,
+      child: Center(
         child: Text(
-          "Main Screen",
-          style: TextStyle(fontSize: 50),
+          "메인",
+          style: TextStyle(fontSize: 40),
         ),
       ),
     );

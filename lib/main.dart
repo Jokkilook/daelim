@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      showPerformanceOverlay: true,
+      // showPerformanceOverlay: true,
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       theme: FlexThemeData.light(scheme: FlexScheme.mandyRed),

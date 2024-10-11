@@ -1,6 +1,8 @@
 const String baseUrl = "https://daelim-server.fleecy.dev/functions/v1/";
 
-const String authUrl = "$baseUrl/auth/get-token";
+const String getTokenUrl = "$baseUrl/auth/get-token";
+
+const String getUserDataUrl = "$baseUrl/auth/my-data";
 
 const String icGoogle =
     "https://daelim-server.fleecy.dev/storage/v1/object/public/icons/google.png";

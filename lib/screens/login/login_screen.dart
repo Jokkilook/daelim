@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //로그인 API 호출
   void _onFetchedAPI() async {
     final response = await http.post(
-      Uri.parse(authUrl),
+      Uri.parse(getTokenUrl),
       headers: {},
       body: jsonEncode(body),
     );
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     };
 
     final response = await http.post(
-      Uri.parse(authUrl),
+      Uri.parse(getTokenUrl),
       body: jsonEncode(loginData),
     );
 
@@ -86,11 +86,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await StorageHelper.setAuthData(authData);
 
-      final savedAuthData = StorageHelper.getAuthData();
+      final savedAuthData = StorageHelper.authData;
 
       Log.cyan(response.body);
       Log.green(savedAuthData);
-      appRouter.pushNamed(AppScreen.main.name);
+
+      mounted ? appRouter.goNamed(AppScreen.main.name) : null;
     }
   }
 
