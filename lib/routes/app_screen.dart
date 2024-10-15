@@ -20,8 +20,10 @@ extension AppScreenExtension on AppScreen {
     switch (this) {
       case AppScreen.main:
         return Icons.home;
+
       case AppScreen.setting:
         return Icons.settings;
+
       default:
         return Icons.face;
     }

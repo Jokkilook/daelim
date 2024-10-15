@@ -13,6 +13,7 @@ final appRouter = GoRouter(
       return null;
     }
     if (StorageHelper.authData == null) {
+      //리턴하는 주소로 이동 ( null 이면 그대로 )
       return AppScreen.login.toPath;
     }
     return null;
@@ -26,6 +27,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppScreen.main.toPath,
       name: AppScreen.main.name,
+      //페이지빌더 - NoTransitionPage 쓰면 화면 전환 효과가 없이 이동함
       pageBuilder: (context, state) => const NoTransitionPage(
         child: MainScreen(),
       ),

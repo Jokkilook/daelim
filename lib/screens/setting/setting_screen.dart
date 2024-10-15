@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
 
+  //설정 페이지 로그인 된 유저 정보 가져오기 ( 토큰으로 유저 정보를 요청하는 api 사용 )
   Future<Map<String, dynamic>> fetchUserData() async {
     final tokenType = StorageHelper.authData!.tokenType.firstUpperCase;
     final token = StorageHelper.authData!.token;

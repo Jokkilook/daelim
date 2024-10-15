@@ -163,18 +163,17 @@ class _LoginScreenState extends State<LoginScreen> {
     bool? obsecure,
     Function(bool down)? onObscure,
   }) {
+    final border = OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none);
+
     return TextField(
       controller: controller,
       obscureText: obsecure ?? false,
       decoration: InputDecoration(
           hintText: hintText,
           fillColor: Colors.white,
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none),
+          enabledBorder: border,
+          focusedBorder: border,
           suffixIcon: obsecure != null
               ? GestureDetector(
                   onTapDown: (details) => onObscure?.call(true),
@@ -187,7 +186,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSSOButton({required String iconUrl, VoidCallback? onTap}) {
+  Widget _buildSSOButton({
+    required String iconUrl,
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(

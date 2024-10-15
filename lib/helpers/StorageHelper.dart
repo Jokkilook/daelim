@@ -5,6 +5,7 @@ class StorageHelper {
   static SharedPreferences? _prefs;
   static const String _authKey = "authKey";
 
+  //초기화. [ 여기나 메인에서 WidgetsFlutterBinding.ensureInitialized(); 해줘야 함. ]
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
   }
