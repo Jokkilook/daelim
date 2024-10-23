@@ -4,6 +4,8 @@ const String getTokenUrl = "$baseUrl/auth/get-token";
 
 const String getUserDataUrl = "$baseUrl/auth/my-data";
 
+const String setProfileImageUrl = "$baseUrl/auth/set-profile-image";
+
 const String icGoogle =
     "https://daelim-server.fleecy.dev/storage/v1/object/public/icons/google.png";
 

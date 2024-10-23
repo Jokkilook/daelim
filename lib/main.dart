@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         swapLegacyOnMaterial3: true,
       ),
       //테마 설정
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
     );
   }
 }
