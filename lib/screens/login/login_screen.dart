@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Log.cyan(response.body);
       Log.green(savedAuthData);
 
-      mounted ? appRouter.goNamed(AppScreen.main.name) : null;
+      mounted ? appRouter.goNamed(AppScreen.users.name) : null;
     }
   }
 

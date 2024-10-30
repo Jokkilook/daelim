@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-enum AppScreen { login, main, setting }
+enum AppScreen { login, users, setting }
 
 extension AppScreenExtension on AppScreen {
   String get toPath {
@@ -8,7 +9,7 @@ extension AppScreenExtension on AppScreen {
       case AppScreen.login:
         return "/login";
 
-      case AppScreen.main:
+      case AppScreen.users:
         return "/main";
 
       case AppScreen.setting:
@@ -18,14 +19,14 @@ extension AppScreenExtension on AppScreen {
 
   IconData get getIcon {
     switch (this) {
-      case AppScreen.main:
-        return Icons.home;
+      case AppScreen.users:
+        return LucideIcons.users;
 
       case AppScreen.setting:
-        return Icons.settings;
+        return LucideIcons.settings2;
 
       default:
-        return Icons.face;
+        return LucideIcons.dot;
     }
   }
 }

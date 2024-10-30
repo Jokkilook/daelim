@@ -9,6 +9,8 @@ import 'package:easy_extension/easy_extension.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -72,21 +74,36 @@ class _SettingScreenState extends State<SettingScreen> {
     if (result != null) {
       final token = StorageHelper.authData!.token;
       final imagePath = result.files.single.path;
+      final imageName = result.files.single.name;
+      final imageMime = lookupMimeType(imageName) ?? "imgae/jpeg";
       // final imageBytes = imageFile.bytes;
 
+      //Mime 타입 자르기
+      final mimeSplit = imageMime.split("/");
+      final type = mimeSplit[0];
+      final subType = mimeSplit[1];
+
       if (imagePath == null) return;
+      Log.blue(imageName);
+      Log.red(imageMime);
 
       final uploadRequest = http.MultipartRequest(
         "POST",
         Uri.parse(setProfileImageUrl),
       )
         ..headers.addAll({HttpHeaders.authorizationHeader: "Bearer $token"})
-        ..files.add(await http.MultipartFile.fromPath("image", imagePath));
+        ..files.add(await http.MultipartFile.fromPath(
+          "image",
+          imagePath,
+          contentType: MediaType(type, subType),
+        ));
 
       final response = await uploadRequest.send();
+      final uploadResult = await http.Response.fromStream(response);
+      Log.green("${uploadResult.statusCode} : ${uploadResult.body}");
 
       if (response.statusCode != 200) {
-        Log.red("프로필 이미지 업로드 에러 : ${response.statusCode}");
+        Log.red("프로필 이미지 업로드 에러 : ${uploadResult.body}");
         return;
       }
 
@@ -94,8 +111,6 @@ class _SettingScreenState extends State<SettingScreen> {
     } else {
       // User canceled the picker
     }
-
-    Log.cyan("야스");
   }
 
   @override

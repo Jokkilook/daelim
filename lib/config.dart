@@ -1,16 +1,20 @@
-const String baseUrl = "https://daelim-server.fleecy.dev/functions/v1/";
+const String _baseUrl = "https://daelim-server.fleecy.dev/functions/v1/";
 
-const String getTokenUrl = "$baseUrl/auth/get-token";
+const String getTokenUrl = "$_baseUrl/auth/get-token";
 
-const String getUserDataUrl = "$baseUrl/auth/my-data";
+const String getUserDataUrl = "$_baseUrl/auth/my-data";
 
-const String setProfileImageUrl = "$baseUrl/auth/set-profile-image";
+const String setProfileImageUrl = "$_baseUrl/auth/set-profile-image";
 
-const String icGoogle =
-    "https://daelim-server.fleecy.dev/storage/v1/object/public/icons/google.png";
+const String getUserlist = "$_baseUrl/users";
 
-const String icGithub =
-    "https://daelim-server.fleecy.dev/storage/v1/object/public/icons/github.png";
+const String _storagPublicUrl =
+    "https://daelim-server.fleecy.dev/storage/v1/object/public";
 
-const String icApple =
-    "https://daelim-server.fleecy.dev/storage/v1/object/public/icons/apple.png";
+const String defaultImageUrl = "$_storagPublicUrl/icons/user.png";
+
+const String icGoogle = "$_storagPublicUrl/icons/google.png";
+
+const String icGithub = "$_storagPublicUrl/icons/github.png";
+
+const String icApple = "$_storagPublicUrl/icons/apple.png";

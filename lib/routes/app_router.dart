@@ -1,7 +1,7 @@
 import 'package:daelim/helpers/StorageHelper.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:daelim/screens/login/login_screen.dart';
-import 'package:daelim/screens/main/main_screen.dart';
+import 'package:daelim/screens/users/users_screen.dart';
 import 'package:daelim/screens/setting/setting_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,11 +25,11 @@ final appRouter = GoRouter(
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
-      path: AppScreen.main.toPath,
-      name: AppScreen.main.name,
+      path: AppScreen.users.toPath,
+      name: AppScreen.users.name,
       //페이지빌더 - NoTransitionPage 쓰면 화면 전환 효과가 없이 이동함
       pageBuilder: (context, state) => const NoTransitionPage(
-        child: MainScreen(),
+        child: UsersScreen(),
       ),
     ),
     GoRoute(
