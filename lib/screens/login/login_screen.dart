@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:daelim/helpers/StorageHelper.dart';
+import 'package:daelim/helpers/api_helper.dart';
+import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/enums/sso_enum.dart';
 import 'package:daelim/extensions/context_extension.dart';
 import 'package:daelim/common/widgets/gradient_divider.dart';
-import 'package:daelim/models/auth_data.dart';
 import 'package:daelim/routes/app_router.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:easy_extension/easy_extension.dart';
@@ -66,30 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.value.text;
     final pw = _pwController.value.text;
 
-    final loginData = {
-      "email": email,
-      "password": pw,
-    };
+    var authData = await ApiHelper.signIn(email: email, pw: pw);
 
-    final response = await http.post(
-      Uri.parse(getTokenUrl),
-      body: jsonEncode(loginData),
-    );
-
-    if (response.statusCode != 200) {
+    if (authData == null) {
       if (mounted) {
-        context.showSnackBar(message: response.body);
+        context.showSnackBar(message: "로그인을 실패했습니다.");
       }
       return;
     } else {
-      var authData = AuthData.fromJson(response.body);
-
       await StorageHelper.setAuthData(authData);
-
-      final savedAuthData = StorageHelper.authData;
-
-      Log.cyan(response.body);
-      Log.green(savedAuthData);
 
       mounted ? appRouter.goNamed(AppScreen.users.name) : null;
     }

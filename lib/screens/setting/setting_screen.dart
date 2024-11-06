@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:daelim/common/scaffold/app_scaffold.dart';
 import 'package:daelim/config.dart';
-import 'package:daelim/helpers/StorageHelper.dart';
+import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/routes/app_screen.dart';
+import 'package:daelim/screens/setting/dialogs/change_password_dialog.dart';
 import 'package:easy_extension/easy_extension.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -77,11 +80,11 @@ class _SettingScreenState extends State<SettingScreen> {
       final imageName = result.files.single.name;
       final imageMime = lookupMimeType(imageName) ?? "imgae/jpeg";
       // final imageBytes = imageFile.bytes;
+      Uint8List? imageBytes;
 
-      //Mime 타입 자르기
-      final mimeSplit = imageMime.split("/");
-      final type = mimeSplit[0];
-      final subType = mimeSplit[1];
+      if (kIsWeb) {
+        imageBytes = result.files.single.bytes;
+      }
 
       if (imagePath == null) return;
       Log.blue(imageName);
@@ -92,11 +95,18 @@ class _SettingScreenState extends State<SettingScreen> {
         Uri.parse(setProfileImageUrl),
       )
         ..headers.addAll({HttpHeaders.authorizationHeader: "Bearer $token"})
-        ..files.add(await http.MultipartFile.fromPath(
-          "image",
-          imagePath,
-          contentType: MediaType(type, subType),
-        ));
+        ..files.add(imageBytes != null
+            ? http.MultipartFile.fromBytes(
+                "image",
+                imageBytes,
+                filename: imageName,
+                contentType: MediaType.parse(imageMime),
+              )
+            : await http.MultipartFile.fromPath(
+                "image",
+                imagePath,
+                contentType: MediaType.parse(imageMime),
+              ));
 
       final response = await uploadRequest.send();
       final uploadResult = await http.Response.fromStream(response);
@@ -113,39 +123,61 @@ class _SettingScreenState extends State<SettingScreen> {
     }
   }
 
+  //비밀번호 변경 다이얼로그
+  Future _changePasswordDialog() async {
+    Log.black("눌렸지비");
+    showDialog(
+      context: context,
+      builder: (context) => const ChangePasswordDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       appScreen: AppScreen.setting,
-      child: Column(
-        children: [
-          ListTile(
-            leading: InkWell(
-              onTap: () async {
-                await _uploadProfileImage();
-              },
-              child: CircleAvatar(
-                backgroundImage: _userProfileImageUrl != null
-                    ? _userProfileImageUrl!.isNotEmpty
-                        ? NetworkImage(_userProfileImageUrl!)
-                        : null
-                    : null,
-                child: _userProfileImageUrl != null
-                    ? _userProfileImageUrl!.isEmpty
-                        ? const Icon(Icons.cancel)
-                        : null
-                    : const CircularProgressIndicator(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        child: Column(
+          children: [
+            ListTile(
+              leading: InkWell(
+                onTap: () async {
+                  await _uploadProfileImage();
+                },
+                child: CircleAvatar(
+                  backgroundImage: _userProfileImageUrl != null
+                      ? _userProfileImageUrl!.isNotEmpty
+                          ? NetworkImage(_userProfileImageUrl!)
+                          : null
+                      : null,
+                  child: _userProfileImageUrl != null
+                      ? _userProfileImageUrl!.isEmpty
+                          ? const Icon(Icons.cancel)
+                          : null
+                      : const CircularProgressIndicator(),
+                ),
               ),
+              title: Text(_userName ?? "데이터 로딩 중..."),
+              subtitle: _userStudentNumder != null
+                  ? Text(
+                      _userStudentNumder!,
+                      maxLines: 1,
+                    )
+                  : null,
             ),
-            title: Text(_userName ?? "데이터 로딩 중..."),
-            subtitle: _userStudentNumder != null
-                ? Text(
-                    _userStudentNumder!,
-                    maxLines: 1,
-                  )
-                : null,
-          )
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("비밀번호 변경"),
+                ElevatedButton(
+                  onPressed: _changePasswordDialog,
+                  child: const Text("변경하기"),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
