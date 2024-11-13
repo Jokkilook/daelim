@@ -39,7 +39,7 @@ class _SettingScreenState extends State<SettingScreen> {
     final token = StorageHelper.authData!.token;
 
     final response = await http.get(
-      Uri.parse(getUserDataUrl),
+      Uri.parse(Config.api.getUserData),
       headers: {HttpHeaders.authorizationHeader: "$tokenType $token"},
     );
 
@@ -92,7 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
       final uploadRequest = http.MultipartRequest(
         "POST",
-        Uri.parse(setProfileImageUrl),
+        Uri.parse(Config.api.setProfileImage),
       )
         ..headers.addAll({HttpHeaders.authorizationHeader: "Bearer $token"})
         ..files.add(imageBytes != null

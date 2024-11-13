@@ -1,15 +1,10 @@
-import 'dart:convert';
-
 import 'package:daelim/common/scaffold/app_scaffold.dart';
 import 'package:daelim/config.dart';
-import 'package:daelim/helpers/storage_helper.dart';
+import 'package:daelim/helpers/api_helper.dart';
 import 'package:daelim/models/user_data.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:daelim/screens/users/user_item.dart';
-import 'package:easy_extension/easy_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io';
 
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -32,7 +27,7 @@ class _UsersScreenState extends State<UsersScreen> {
         name: "유저 $index",
         student_number: "$index",
         email: "$index@daelim.ac.kr",
-        profile_image: defaultImageUrl,
+        profile_image: Config.image.defaultProfile,
       );
     },
   );
@@ -41,49 +36,24 @@ class _UsersScreenState extends State<UsersScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _fetchUsers();
+    _fetchUserList();
     // searchedList = userList;
   }
 
   void _onSearch(String value) {
-    searchedList = [];
-    if (value.isEmpty) {
-      return;
-    }
     setState(() {
       searchedList = userList
           .where((e) => e.name.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
-
-    // for (var user in userList) {
-    //   user.name.contains(value) ? searchedList.add(user) : null;
-    // }
   }
 
-  Future _fetchUsers() async {
-    final tokenType = StorageHelper.authData!.tokenType.firstUpperCase;
-    final token = StorageHelper.authData!.token;
-
-    final response = await http.get(
-      Uri.parse(getUserlist),
-      headers: {HttpHeaders.authorizationHeader: "$tokenType $token"},
-    );
-
-    final body = utf8.decode(response.bodyBytes);
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (response.statusCode != 200) {}
-
-    final userData = jsonDecode(body);
-    Log.black(userData);
-
-    final List<dynamic> userListJson = userData['data'];
-    List<UserData> userLists =
-        userListJson.map((json) => UserData.fromMap(json)).toList();
-
-    userList = userLists;
+  Future _fetchUserList() async {
+    final userList = await ApiHelper.fetchUseList();
+    setState(() {
+      this.userList = userList;
+      searchedList = userList;
+    });
   }
 
   @override
@@ -99,9 +69,10 @@ class _UsersScreenState extends State<UsersScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //유저 목록 타이틀
-                const Text(
-                  "유저 목록",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                Text(
+                  "유저 목록 (${searchedList.length})",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 28),
                 ),
 
                 const SizedBox(height: 15),
@@ -138,9 +109,7 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-
           const Divider(),
-
           searchedList.isEmpty
               ? Container(
                   alignment: Alignment.center,
@@ -152,20 +121,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       color: Color(0xFFA5A5A5),
                     ),
                   ))
-              :
-
-              //유저 목록
-              // FutureBuilder(
-              //   future: _fetchUsers(),
-              //   builder: (context, snapshot) {
-              //     if (snapshot.connectionState == ConnectionState.waiting) {
-              //       return const Expanded(
-              //           child: Center(child: CircularProgressIndicator()));
-              //     }
-
-              //     if (snapshot.connectionState == ConnectionState.done) {
-              //       return
-              Expanded(
+              : Expanded(
                   child: ListView.separated(
                     itemCount: searchedList.isEmpty
                         ? userList.length
@@ -179,20 +135,11 @@ class _UsersScreenState extends State<UsersScreen> {
                       return UserItem(
                           name: user.name,
                           stNum: user.student_number,
-                          ImageUrl: user.profile_image ?? defaultImageUrl);
+                          ImageUrl: user.profile_image ??
+                              Config.image.defaultProfile);
                     },
                   ),
                 )
-          //       ;
-          //     } else {
-          //       return const Expanded(
-          //         child: Center(
-          //           child: Text("유저가 없습니다."),
-          //         ),
-          //       );
-          //     }
-          //   },
-          // ),
         ],
       ),
     );

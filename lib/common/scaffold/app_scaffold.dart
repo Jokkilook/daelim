@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class AppScaffold extends StatelessWidget {
   final AppScreen appScreen;
   final Widget child;
+  AppBar? appBar;
 
-  const AppScaffold({
-    super.key,
-    required this.appScreen,
-    required this.child,
-  });
+  AppScaffold(
+      {super.key, required this.appScreen, required this.child, this.appBar});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,12 @@ class AppScaffold extends StatelessWidget {
         children: [
           AppNavigationRail(appScreen: appScreen),
           Expanded(
-            child: child,
+            child: Column(
+              children: [
+                if (appBar != null) appBar!,
+                Expanded(child: child),
+              ],
+            ),
           ),
         ],
       )),

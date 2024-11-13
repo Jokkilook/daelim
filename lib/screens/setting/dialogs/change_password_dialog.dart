@@ -1,7 +1,10 @@
 import 'package:daelim/extensions/context_extension.dart';
 import 'package:daelim/helpers/api_helper.dart';
 import 'package:daelim/helpers/storage_helper.dart';
+import 'package:daelim/routes/app_router.dart';
+import 'package:daelim/routes/app_screen.dart';
 import 'package:easy_extension/easy_extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordDialog extends StatefulWidget {
@@ -100,9 +103,26 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
       });
     }
     //새로운 비밀번호로 변경 -> 성공 후 로그아웃 및 로그인 화면으로 이동
-    setState(() {
-      currentPasswordValidateMessage = "";
-    });
+    // final (success, error) = await ApiHelper.changePassword(newPassword);
+    final result = await ApiHelper.changePassword(newPassword);
+    final success = result.success;
+    final error = result.error;
+
+    //변경 실패
+    if (!success) {
+      Log.red("비밀번호 변경 에러: $error");
+      if (mounted) {
+        context.showSnackBar(message: "비밀번호를 변경할 수 없습니다.");
+      }
+      return;
+    }
+
+    //변경 성공
+    await StorageHelper.removeAuthData();
+    if (mounted) {
+      context.showSnackBar(message: "비밀번호를 변경했습니다. 다시 로그인해주세요.");
+      appRouter.pushReplacementNamed(AppScreen.login.name);
+    }
   }
 
   @override

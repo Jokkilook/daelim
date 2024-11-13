@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //로그인 API 호출
   void _onFetchedAPI() async {
     final response = await http.post(
-      Uri.parse(getTokenUrl),
+      Uri.parse(Config.api.getToken),
       headers: {},
       body: jsonEncode(body),
     );
@@ -264,13 +264,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildSSOButton(
-                              iconUrl: icGoogle,
+                              iconUrl: Config.icon.icGoogle,
                               onTap: () => _onSsoSignIn(SsoEnum.google)),
                           _buildSSOButton(
-                              iconUrl: icGithub,
+                              iconUrl: Config.icon.icGithub,
                               onTap: () => _onSsoSignIn(SsoEnum.github)),
                           _buildSSOButton(
-                              iconUrl: icApple,
+                              iconUrl: Config.icon.icApple,
                               onTap: () => _onSsoSignIn(SsoEnum.apple)),
                         ],
                       )
