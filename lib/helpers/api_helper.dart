@@ -1,14 +1,47 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:daelim/common/typedef/app_typedef.dart';
 import 'package:daelim/config.dart';
 import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/models/auth_data.dart';
 import 'package:daelim/models/user_data.dart';
+import 'package:daelim/routes/app_router.dart';
+import 'package:daelim/routes/app_screen.dart';
 import 'package:easy_extension/easy_extension.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ApiHelper {
+  //GET
+  static Future<http.Response> get(String url) {
+    final authData = StorageHelper.authData!;
+
+    return http.get(
+      Uri.parse(url),
+      headers: {
+        HttpHeaders.authorizationHeader:
+            "${authData.tokenType} ${authData.token}"
+      },
+    );
+  }
+
+  //POST
+  static Future<http.Response> post(String url, {Map<String, dynamic>? body}) {
+    final authData = StorageHelper.authData;
+
+    return http.post(
+      Uri.parse(url),
+      headers: authData != null
+          ? {
+              HttpHeaders.authorizationHeader:
+                  "${authData.tokenType} ${authData.token}"
+            }
+          : null,
+      body: body != null ? jsonEncode(body) : null,
+    );
+  }
+
   static Future<AuthData?> signIn(
       {required String email, required String pw}) async {
     final loginData = {
@@ -16,10 +49,7 @@ class ApiHelper {
       "password": pw,
     };
 
-    final response = await http.post(
-      Uri.parse(Config.api.getToken),
-      body: jsonEncode(loginData),
-    );
+    final response = await post(Config.api.getToken, body: loginData);
 
     final statusCode = response.statusCode;
     final body = utf8.decode(response.bodyBytes);
@@ -37,33 +67,32 @@ class ApiHelper {
     }
   }
 
-  static Future<({bool success, String error})> changePassword(
-      String newPassword) async {
-    final authData = StorageHelper.authData!;
+  static Future signOut(BuildContext context) async {
+    await StorageHelper.removeAuthData();
 
-    final response = await http.post(
-      Uri.parse(Config.api.changePassword),
-      headers: {HttpHeaders.authorizationHeader: "Bearer ${authData.token}"},
-      body: jsonEncode({"password": newPassword}),
-    );
+    if (!context.mounted) {
+      return;
+    }
+
+    appRouter.goNamed(AppScreen.login.name);
+  }
+
+  static Future<Result> changePassword(String newPassword) async {
+    final response =
+        await post(Config.api.changePassword, body: {"password": newPassword});
 
     final statusCode = response.statusCode;
     final body = utf8.decode(response.bodyBytes);
 
-    if (statusCode != 200) return (success: false, error: body);
+    if (statusCode != 200) return (false, body);
 
-    return (success: true, error: "");
+    return (true, "");
   }
 
   static Future<List<UserData>> fetchUseList() async {
-    final tokenType = StorageHelper.authData!.tokenType.firstUpperCase;
-    final token = StorageHelper.authData!.token;
     List<UserData> userLists = [];
 
-    final response = await http.get(
-      Uri.parse(Config.api.getUserList),
-      headers: {HttpHeaders.authorizationHeader: "$tokenType $token"},
-    );
+    final response = await get(Config.api.getUserList);
 
     final statusCode = response.statusCode;
     final body = utf8.decode(response.bodyBytes);
@@ -81,5 +110,27 @@ class ApiHelper {
     userLists = userListJson.map((json) => UserData.fromMap(json)).toList();
 
     return userLists;
+  }
+
+  //채팅방 생성 API
+  ///-[targetId] 상대방 ID
+  static Future<ResultWithCode> createChatRoom(String targetId) async {
+    final response = await post(
+      Config.api.createRoom,
+      body: {"user_id": targetId},
+    );
+
+    final statusCode = response.statusCode;
+    final body = utf8.decode(response.bodyBytes);
+
+    if (statusCode != 200) {
+      return (statusCode, body);
+    }
+
+    final bodyJson = jsonDecode(body);
+    final int code = bodyJson['code'] ?? 404;
+    final String message = bodyJson['message'] ?? "";
+
+    return (code, message);
   }
 }

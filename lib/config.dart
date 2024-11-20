@@ -1,6 +1,6 @@
 class Config {
   static const String _baseFunctionUrl =
-      "https://daelim-server.fleecy.dev/functions/v1/";
+      "https://daelim-server.fleecy.dev/functions/v1";
   static const String _storagePublicUrl =
       "https://daelim-server.fleecy.dev/storage/v1/object/public";
 
@@ -17,7 +17,8 @@ class Config {
     getUserData: "$_baseFunctionUrl/auth/my-data",
     setProfileImage: "$_baseFunctionUrl/auth/set-profile-image",
     getUserList: "$_baseFunctionUrl/users",
-    changePassword: "$_baseFunctionUrl/auth/reset-password"
+    changePassword: "$_baseFunctionUrl/auth/reset-password",
+    createRoom: "$_baseFunctionUrl/chat/room/create"
   );
 
   static const storage = ();

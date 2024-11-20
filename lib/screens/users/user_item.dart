@@ -1,29 +1,27 @@
+import 'package:daelim/config.dart';
+import 'package:daelim/models/user_data.dart';
 import 'package:flutter/material.dart';
 
 class UserItem extends StatelessWidget {
-  const UserItem({
-    super.key,
-    required this.name,
-    required this.stNum,
-    required this.ImageUrl,
-  });
+  UserItem({super.key, required this.userData, this.onTap});
 
-  final String name;
-  final String stNum;
-  final String ImageUrl;
+  final UserData userData;
+  VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFEAEAEA),
-        foregroundImage: NetworkImage(ImageUrl),
+        foregroundImage:
+            NetworkImage(userData.profile_image ?? Config.image.defaultProfile),
       ),
       title: Text(
-        name,
+        userData.name,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text(stNum),
+      subtitle: Text(userData.student_number),
     );
   }
 }

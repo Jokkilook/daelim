@@ -1,9 +1,12 @@
 import 'package:daelim/common/scaffold/app_scaffold.dart';
 import 'package:daelim/config.dart';
+import 'package:daelim/extensions/context_extension.dart';
 import 'package:daelim/helpers/api_helper.dart';
 import 'package:daelim/models/user_data.dart';
 import 'package:daelim/routes/app_screen.dart';
+import 'package:daelim/screens/api_error.dart';
 import 'package:daelim/screens/users/user_item.dart';
+import 'package:easy_extension/easy_extension.dart';
 import 'package:flutter/material.dart';
 
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -54,6 +57,33 @@ class _UsersScreenState extends State<UsersScreen> {
       this.userList = userList;
       searchedList = userList;
     });
+  }
+
+  //채팅방 개설
+  void _onCreateRoom(UserData userData) async {
+    Log.green(userData.name);
+
+    final (code, error) = await ApiHelper.createChatRoom(userData.id);
+
+    if (code != 200) {
+      return context.showSnackBar(message: error);
+    }
+
+    if (code == ApiError.createChatRomm.success) {
+      //채팅방 개설 완료
+    } else if (code == ApiError.createChatRomm.requiredUserId) {
+      //상대방 ID 필수
+    } else if (code == ApiError.createChatRomm.cannotMySelf) {
+      //자기 자신
+    } else if (code == ApiError.createChatRomm.notFound) {
+      //상대방 없음
+    } else if (code == ApiError.createChatRomm.onlyCnChatbot) {
+      //오직 챗봇만 가능
+    } else if (code == ApiError.createChatRomm.alreadyRoom) {
+      //이미 있음
+    }
+
+    return context.showSnackBar(message: "채팅방 개설 성공!");
   }
 
   @override
@@ -133,10 +163,9 @@ class _UsersScreenState extends State<UsersScreen> {
                           : searchedList[index];
 
                       return UserItem(
-                          name: user.name,
-                          stNum: user.student_number,
-                          ImageUrl: user.profile_image ??
-                              Config.image.defaultProfile);
+                        userData: user,
+                        onTap: () => _onCreateRoom(user),
+                      );
                     },
                   ),
                 )
