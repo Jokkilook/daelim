@@ -1,9 +1,11 @@
 import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:daelim/screens/login/login_screen.dart';
+import 'package:daelim/screens/rooms/chat_screen.dart';
 import 'package:daelim/screens/rooms/rooms_screen.dart';
 import 'package:daelim/screens/users/users_screen.dart';
 import 'package:daelim/screens/setting/setting_screen.dart';
+import 'package:easy_extension/easy_extension.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -42,11 +44,20 @@ final appRouter = GoRouter(
       ),
     ),
     GoRoute(
+        path: "${AppScreen.chat.toPath}/:roomId",
+        name: AppScreen.chat.name,
+        pageBuilder: (context, state) {
+          Log.red(state.pathParameters["roomId"]);
+          return NoTransitionPage(
+            child: ChatScreen(roomId: state.pathParameters["roomId"] ?? ""),
+          );
+        }),
+    GoRoute(
       path: AppScreen.setting.toPath,
       name: AppScreen.setting.name,
       pageBuilder: (context, state) => const NoTransitionPage(
         child: SettingScreen(),
       ),
-    )
+    ),
   ],
 );

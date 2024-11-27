@@ -1,4 +1,6 @@
 class ApiError {
+  //쓰려다가 switch에서 const 변수 사용 안돼서 버림.
+  final createRoomSuccess = 200;
   static const createChatRomm = (
     success: 200,
     requiredUserId: 1001,

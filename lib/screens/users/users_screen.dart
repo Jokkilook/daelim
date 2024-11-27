@@ -3,6 +3,7 @@ import 'package:daelim/config.dart';
 import 'package:daelim/extensions/context_extension.dart';
 import 'package:daelim/helpers/api_helper.dart';
 import 'package:daelim/models/user_data.dart';
+import 'package:daelim/routes/app_router.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:daelim/screens/api_error.dart';
 import 'package:daelim/screens/users/user_item.dart';
@@ -63,25 +64,52 @@ class _UsersScreenState extends State<UsersScreen> {
   void _onCreateRoom(UserData userData) async {
     Log.green(userData.name);
 
-    final (code, error) = await ApiHelper.createChatRoom(userData.id);
+    final (code, roomId) = await ApiHelper.createChatRoom(userData.id);
 
-    if (code != 200) {
-      return context.showSnackBar(message: error);
+    switch (code) {
+      case 200:
+        //채팅방 개설 완료
+        Log.red(roomId);
+        break;
+      case 1001:
+        //상대방 ID 필수
+        return context.showSnackBar(message: "상대방 ID는 필수입니다.");
+      case 1002:
+        //자기 자신
+        return context.showSnackBar(message: "자신과 대화할 수 없습니다.");
+      case 1003:
+        //상대방 없음
+        return context.showSnackBar(message: "상대방 검색에 실패했습니다.");
+      case 1004:
+        //오직 챗봇만 가능
+        return context.showSnackBar(message: "챗봇만 대화가 가능합니다.");
+      case 1005:
+        //이미 있음
+        Log.red("이미 있는 채팅방 : $roomId");
+        context.showSnackBar(message: "이미 채팅방이 있습니다.");
+        appRouter
+            .pushNamed(AppScreen.chat.name, pathParameters: {"roomId": roomId});
+      default:
+        return context.showSnackBar(message: "끼룩");
     }
 
-    if (code == ApiError.createChatRomm.success) {
-      //채팅방 개설 완료
-    } else if (code == ApiError.createChatRomm.requiredUserId) {
-      //상대방 ID 필수
-    } else if (code == ApiError.createChatRomm.cannotMySelf) {
-      //자기 자신
-    } else if (code == ApiError.createChatRomm.notFound) {
-      //상대방 없음
-    } else if (code == ApiError.createChatRomm.onlyCnChatbot) {
-      //오직 챗봇만 가능
-    } else if (code == ApiError.createChatRomm.alreadyRoom) {
-      //이미 있음
-    }
+    // if (code != 200) {
+    //   return context.showSnackBar(message: error);
+    // }
+
+    // if (code == ApiError.createChatRomm.success) {
+    //   //채팅방 개설 완료
+    // } else if (code == ApiError.createChatRomm.requiredUserId) {
+    //   //상대방 ID 필수
+    // } else if (code == ApiError.createChatRomm.cannotMySelf) {
+    //   //자기 자신
+    // } else if (code == ApiError.createChatRomm.notFound) {
+    //   //상대방 없음
+    // } else if (code == ApiError.createChatRomm.onlyCnChatbot) {
+    //   //오직 챗봇만 가능
+    // } else if (code == ApiError.createChatRomm.alreadyRoom) {
+    //   //이미 있음
+    // }
 
     return context.showSnackBar(message: "채팅방 개설 성공!");
   }

@@ -5,6 +5,7 @@ import 'package:daelim/common/typedef/app_typedef.dart';
 import 'package:daelim/config.dart';
 import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/models/auth_data.dart';
+import 'package:daelim/models/message_data.dart';
 import 'package:daelim/models/user_data.dart';
 import 'package:daelim/routes/app_router.dart';
 import 'package:daelim/routes/app_screen.dart';
@@ -129,8 +130,12 @@ class ApiHelper {
 
     final bodyJson = jsonDecode(body);
     final int code = bodyJson['code'] ?? 404;
-    final String message = bodyJson['message'] ?? "";
+    final Map<String, dynamic> message = bodyJson['message'] ?? {};
+    final String roomId = message["room_id"] ?? "";
+    final String joinedAt = message["joined_at"] ?? "";
 
-    return (code, message);
+    Log.green("끼룩: $message");
+
+    return (code, roomId);
   }
 }
