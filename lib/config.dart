@@ -22,6 +22,11 @@ class Config {
   );
 
   static const storage = ();
+
+  static const supabseUrl = "https://daelim-server.fleecy.dev";
+
+  static const anonKey =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzE3MzQwNDAwLAogICJleHAiOiAxODc1MTA2ODAwCn0.aMXxldFuuDXaZhl1Ap5bTQS_601EwbOOVE8YdPmAuc8";
 }
 
 // const String _baseUrl = "https://daelim-server.fleecy.dev/functions/v1/";

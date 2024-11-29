@@ -1,7 +1,7 @@
 import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/routes/app_screen.dart';
 import 'package:daelim/screens/login/login_screen.dart';
-import 'package:daelim/screens/rooms/chat_screen.dart';
+import 'package:daelim/screens/chat/chat_screen.dart';
 import 'package:daelim/screens/rooms/rooms_screen.dart';
 import 'package:daelim/screens/users/users_screen.dart';
 import 'package:daelim/screens/setting/setting_screen.dart';

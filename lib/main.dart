@@ -1,11 +1,15 @@
+import 'package:daelim/config.dart';
 import 'package:daelim/helpers/storage_helper.dart';
 import 'package:daelim/routes/app_router.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageHelper.init();
+  //수파베이스 초기화
+  await Supabase.initialize(url: Config.supabseUrl, anonKey: Config.anonKey);
   runApp(const MyApp());
 }
 

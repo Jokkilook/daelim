@@ -86,9 +86,9 @@ class _UsersScreenState extends State<UsersScreen> {
       case 1005:
         //이미 있음
         Log.red("이미 있는 채팅방 : $roomId");
-        context.showSnackBar(message: "이미 채팅방이 있습니다.");
         appRouter
             .pushNamed(AppScreen.chat.name, pathParameters: {"roomId": roomId});
+        return;
       default:
         return context.showSnackBar(message: "끼룩");
     }
@@ -110,8 +110,6 @@ class _UsersScreenState extends State<UsersScreen> {
     // } else if (code == ApiError.createChatRomm.alreadyRoom) {
     //   //이미 있음
     // }
-
-    return context.showSnackBar(message: "채팅방 개설 성공!");
   }
 
   @override

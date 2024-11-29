@@ -61,6 +61,7 @@ class ApiHelper {
     bodyJson.addAll({'email': email});
 
     try {
+      Log.green(AuthData.fromMap(bodyJson));
       return AuthData.fromMap(bodyJson);
     } catch (e, stackTrace) {
       Log.cyan("유저 정보 파싱 에러: $e\n$stackTrace");
