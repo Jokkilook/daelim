@@ -13,6 +13,10 @@ import 'package:easy_extension/easy_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+//데이터 클래스로 변환은 utf8로 bodybytes 디코드 후
+//디코드 한 걸 jsonDecode() as Map<String, dynamic> 으로 캐스팅 후
+//캐스팅 한 것을 데이터클래스.fromMap으로 변환
+
 class ApiHelper {
   //GET
   static Future<http.Response> get(String url) {
@@ -43,6 +47,7 @@ class ApiHelper {
     );
   }
 
+  //로그인 API
   static Future<AuthData?> signIn(
       {required String email, required String pw}) async {
     final loginData = {
@@ -69,6 +74,7 @@ class ApiHelper {
     }
   }
 
+  //로그아웃 API
   static Future signOut(BuildContext context) async {
     await StorageHelper.removeAuthData();
 
@@ -79,6 +85,7 @@ class ApiHelper {
     appRouter.goNamed(AppScreen.login.name);
   }
 
+  //비밀번호 변경 API
   static Future<Result> changePassword(String newPassword) async {
     final response =
         await post(Config.api.changePassword, body: {"password": newPassword});
@@ -91,6 +98,7 @@ class ApiHelper {
     return (true, "");
   }
 
+  //유저 목록 로딩 API
   static Future<List<UserData>> fetchUseList() async {
     List<UserData> userLists = [];
 

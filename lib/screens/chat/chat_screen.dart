@@ -17,6 +17,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   String get _roomId => widget.roomId;
 
+  //수파베이스 인스턴스 클라이언트 반환
   final _client = Supabase.instance.client;
   StreamSubscription<List<Map<String, dynamic>>>? _messageStream;
   final _textController = TextEditingController();

@@ -17,6 +17,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
   final _newPwController = TextEditingController();
   final _confirmPwController = TextEditingController();
 
+  //폼 체크를 위한 폼키
   final _currentPwFormKey = GlobalKey<FormState>();
   final _newPwFormKey = GlobalKey<FormState>();
   final _confirmPwFormKey = GlobalKey<FormState>();
@@ -72,6 +73,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     );
   }
 
+  //발리데이트 함수
   String? _validator(String? value) {
     if (value == null || value.isEmpty) {
       return "이 입력란을 작성하세요.";

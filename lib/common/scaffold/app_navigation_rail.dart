@@ -16,7 +16,9 @@ class AppNavigationRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //앱 라우터에 추가하면 자동으로 레일에 추가됨.
     final screens = List<AppScreen>.from(AppScreen.values);
+    //앱 레일에 없앨 것 삭제.
     screens.removeRange(0, 2);
 
     return Column(
